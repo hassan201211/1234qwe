@@ -33,7 +33,7 @@ $(PLATFORMS): deps
 		DEST="generic/platform=macOS,variant=Mac Catalyst"; \
 	fi; \
 	xcodebuild \
-		-project Feather.xcodeproj \
+		-workspace Feather.xcworkspace \
 		-scheme $(SCHEME) \
 		-configuration Release \
 		-destination "$$DEST" \
