@@ -1,4 +1,5 @@
 name: Release
+
 on:
   push:
     tags:
@@ -17,17 +18,15 @@ jobs:
 
       - name: Setup Submodules
         run: |
+          git submodule sync --recursive
           git submodule update --init --recursive --force
-
-      - name: Resolve Package Dependencies
-        run: |
-          xcodebuild -resolvePackageDependencies -workspace Feather.xcworkspace -scheme Feather
 
       - name: Compile Feather
         run: | 
           mkdir -p Zsign
           echo "MIT License" > Zsign/LICENSE_LC
           agvtool new-version -all $(git rev-parse HEAD)
+          xcodebuild -resolvePackageDependencies -workspace Feather.xcworkspace -scheme Feather
           make
           mkdir upload
           mv packages/* upload/
