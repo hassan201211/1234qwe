@@ -20,6 +20,7 @@ jobs:
 
       - name: Compile Feather
         run: | 
+          touch Zsign/LICENSE_LC
           agvtool new-version -all $(git rev-parse HEAD)
           make
           mkdir upload
