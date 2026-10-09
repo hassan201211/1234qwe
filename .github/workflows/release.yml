@@ -1,46 +1,46 @@
 on:
-push:
-tags:
-  - v*
-workflow_dispatch:
+  push:
+    tags:
+      - v*
+  workflow_dispatch:
 
 jobs:
-build:
-runs-on: macos-latest
-steps:
-  - name: Checkout
-    uses: actions/checkout@v4
-    with:
-      submodules: recursive
-      fetch-depth: 0
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
 
-  - name: Resolve Swift Packages
-    run: |
-      xcodebuild -resolvePackageDependencies -workspace Feather.xcworkspace -scheme Feather
+      - name: Resolve Swift Packages
+        run: |
+          xcodebuild -resolvePackageDependencies -workspace Feather.xcworkspace -scheme Feather
 
-  - name: Compile Feather
-    run: | 
-      touch Zsign/LICENSE_LC
-      agvtool new-version -all $(git rev-parse HEAD)
-      make
-      mkdir upload
-      mv packages/* upload/
+      - name: Compile Feather
+        run: | 
+          touch Zsign/LICENSE_LC
+          agvtool new-version -all $(git rev-parse HEAD)
+          make
+          mkdir upload
+          mv packages/* upload/
 
-  - name: Extract Version
-    id: get_version
-    run: |
-      VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" _build/Payload/*.app/Info.plist)
-      echo "VERSION=${VERSION}" >> $GITHUB_ENV
+      - name: Extract Version
+        id: get_version
+        run: |
+          VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" _build/Payload/*.app/Info.plist)
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
-  - name: Create Release
-    uses: softprops/action-gh-release@v2
-    with:
-      name: Feather v${{ env.VERSION }}
-      tag_name: v${{ env.VERSION }}
-      files: |
-        upload/*
-      generate_release_notes: true
-      fail_on_unmatched_files: true
-      draft: true
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Feather v${{ env.VERSION }}
+          tag_name: v${{ env.VERSION }}
+          files: |
+            upload/*
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          draft: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
