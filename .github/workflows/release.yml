@@ -19,7 +19,7 @@ jobs:
 
       - name: Resolve Swift Packages
         run: |
-          xcodebuild -resolvePackageDependencies -project Feather.xcodeproj -scheme Feather
+          xcodebuild -resolvePackageDependencies -workspace Feather.xcworkspace -scheme Feather
 
       - name: Compile Feather
         run: | 
